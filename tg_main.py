@@ -3,6 +3,8 @@ import telebot
 from telebot import types
 import math
 from physics import temperature, electricity, weight, s_values
+from equal_gen import Equal
+
 
 class Discr():
     def GetDis(a, b ,c):
@@ -20,11 +22,11 @@ class Discr():
         return fin_res;
 
 # put your token in the string
-bot = telebot.TeleBot("enter your token here")
+bot = telebot.TeleBot("")
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    bot.send_message(message.chat.id, "Привет, это бот для физики/алгебры!\n1)Напиши discr и 3 коэфицента уравнения рядом, ставь знаки между числами как в примере: (discr -3;2.0,7), чтобы найти дискриминант\n2)Напиши physics.el для получение формул об электричестве\n3)Напиши physics.temp для получение формул о температуре\n2)Напиши physics.weight для получение формул о весе, силе и давлении\n2)Напиши geom.square для получение формул о площадях фигур")
+    bot.send_message(message.chat.id, "Привет, это бот для физики/алгебры!\n1)Напиши discr и 3 коэфицента уравнения рядом, ставь знаки между числами как в примере: (discr -3;2.0,7), чтобы найти корни\n2)Напиши physics.el для получение формул об электричестве\n3)Напиши physics.temp для получение формул о температуре\n4)Напиши physics.weight для получение формул о весе, силе и давлении\n5)Напиши geom.square для получение формул о площадях фигур\n6)напиши gen + уровень сложности (easy, medium, hard), чтобы сгенерировать уравнение. Пример 'gen easy'")
 @bot.message_handler(content_types=['text'])
 def answer(message):
     if message.chat.type == 'private':
@@ -49,6 +51,13 @@ def answer(message):
             for i in s_values:
                 result += i
             bot.send_message(message.chat.id, result)
+        elif "gen" in message.text.lower():
+            difficulty = message.text.lower()[4:]
+            try:
+                bot.send_message(message.chat.id, Equal.Generate(difficulty))
+            except:
+                bot.send_message(message.chat.id, "Что то пошло не так ...")
+
         elif "discr" in message.text.lower():
             statement_error = False
             try:
